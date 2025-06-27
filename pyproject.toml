@@ -3,12 +3,18 @@ name = "nlba"
 version = "0.1.0"
 description = "Natural Language Bash Assistant"
 authors = [{ name = "Artyomka", email = "artyomka@example.com" }]
-dependencies = []
+dependencies = [
+    "google-generativeai",
+    "openai"
+]
+
 requires-python = ">=3.9"
 
-[build-system]
-requires = ["uv>=0.1.0"]
-build-backend = "uv.build"
+[project.optional-dependencies]
+dev = ["pytest"]
 
-[tool.uv]
-src = "src"
+[build-system]
+requires = ["uv>=0.1.0", "setuptools"]
+build-backend = "setuptools.build_meta"
+
+

@@ -8,6 +8,6 @@
 5. [x] Implemented actual command execution using Python's `subprocess` module in `nlba.py`.
 
 ## Future Tasks (MVP)
-1. [ ] **Implement Actual LLM Integration:** Replace the mock logic in `LLMInterface.generate_bash_command` (within `nlba.py` or a new `llm_interface.py`) with calls to a real LLM API (e.g., Google Gemini API, OpenAI API). This includes installing necessary SDKs, setting up API keys, and crafting effective prompts.
+1. [x] **Implement Actual LLM Integration:** Implemented an abstraction for LLM providers (`BaseLLMProvider`), with concrete implementations for `MockLLMProvider`, `GeminiLLMProvider`, and `OpenAILLMProvider`. Updated `llm_interface.py` to manage these providers and `nlba.py` to allow provider selection via a `--provider` argument. Added `google-generativeai` and `openai` dependencies to `pyproject.toml`.
 2. [x] **Refactor Codebase:** Separate the LLM interaction logic into `llm_interface.py` and command execution logic into `command_executor.py` for better organization and maintainability.
-3. [ ] **Comprehensive Testing:** Test the integrated system thoroughly with various natural language requests and corresponding bash commands, focusing on the initial filesystem operations (`ls`, `cd`, `mkdir`, `rm`, `cp`, `mv`, `cat`, `grep`, `find`).
+3. [x] **Comprehensive Testing:** Test the integrated system thoroughly with various natural language requests and corresponding bash commands, focusing on the initial filesystem operations (`ls`, `cd`, `mkdir`, `rm`, `cp`, `mv`, `cat`, `grep`, `find`).
