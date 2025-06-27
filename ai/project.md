@@ -1,0 +1,26 @@
+# Natural Language Bash Assistant (NLBA) Project
+
+## Project Goal
+To create a command-line utility that translates natural language requests into executable bash commands, initially focusing on file system operations, and then executing them.
+
+## Core Features (Initial Scope - MVP)
+1.  **Natural Language Input:** Accept a user's request in plain English (e.g., "list all python files in the current directory").
+2.  **LLM Command Generation:** Use an LLM to translate the natural language request into an appropriate bash command (e.g., `ls -l *.py`).
+3.  **Command Preview & Confirmation:** Display the generated bash command to the user and ask for confirmation before execution.
+4.  **Command Execution:** Execute the confirmed bash command.
+5.  **Output Display:** Show the output of the executed command to the user.
+6.  **Filesystem Operations (Initial Focus):** Prioritize commands related to `ls`, `cd`, `mkdir`, `rm`, `cp`, `mv`, `cat`, `grep`, `find`.
+
+## Technology Stack
+*   **Language:** Python
+*   **LLM:** Placeholder for an LLM API (e.g., Gemini API, OpenAI API).
+*   **Shell Interaction:** Python's `subprocess` module.
+*   **CLI Framework:** `argparse` (initially).
+
+## Project Structure
+*   `src/nlba/nlba.py`: Main CLI script.
+*   `src/nlba/llm_interface.py` (Future): Handles communication with the LLM.
+*   `src/nlba/command_executor.py` (Future): Manages the execution of bash commands.
+*   `ai/`: Directory for AI-related components and project documentation.
+    *   `project.md`: This project description.
+    *   `tasks.md`: List of performed and future tasks.
