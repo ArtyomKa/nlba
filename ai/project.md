@@ -11,6 +11,9 @@ To create a command-line utility that translates natural language requests into 
 5.  **Output Display:** Show the output of the executed command to the user.
 6.  **Filesystem Operations (Initial Focus):** Prioritize commands related to `ls`, `cd`, `mkdir`, `rm`, `cp`, `mv`, `cat`, `grep`, `find`.
 
+## Core Features (MVP2)
+1. **Command Modification Indication:** Display the generated bash command in color to indicate whether it performs a modification (red) or is non-destructive (green).
+
 ## Technology Stack
 *   **Language:** Python
 *   **LLM:** Placeholder for an LLM API (e.g., Gemini API, OpenAI API).

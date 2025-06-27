@@ -1,11 +1,18 @@
 import os
 from abc import ABC, abstractmethod
 
+PROMPT_TEMPLATE = (
+    "Convert the following natural language request into a single, executable bash command. "
+    "Format the response as:\nCOMMAND\nCLASSIFICATION\n"
+    "Where CLASSIFICATION is either 'destructive' or 'non-destructive'. "
+    "Do not include any explanations or additional text.\n\nRequest: {request}\nCommand:"
+)
+
 class BaseLLMProvider(ABC):
     """Abstract base class for LLM providers."""
 
     @abstractmethod
-    def generate_command(self, natural_language_request: str) -> str:
+    def generate_command(self, natural_language_request: str) -> tuple[str, str]:
         """
         Generates a bash command from a natural language request.
 
@@ -13,28 +20,28 @@ class BaseLLMProvider(ABC):
             natural_language_request: The user's request in natural language.
 
         Returns:
-            A string representing the generated bash command.
+            A tuple containing the bash command and a classification ("destructive" or "non-destructive").
         """
-        pass
+        return "ls -l", "non-destructive"
 
 
 class MockLLMProvider(BaseLLMProvider):
     """A mock LLM provider for testing and development."""
 
-    def generate_command(self, natural_language_request: str) -> str:
+    def generate_command(self, natural_language_request: str) -> tuple[str, str]:
         """
         Generates a mock bash command based on the natural language request.
         """
         if "list files" in natural_language_request:
-            return "ls -l"
+            return "ls -l", "non-destructive"
         elif "create directory" in natural_language_request:
-            return "mkdir new_dir"
+            return "mkdir new_dir", "destructive"
         elif "remove file" in natural_language_request:
-            return "rm test_file.txt"
+            return "rm test_file.txt", "destructive"
         elif "create a new folder called new_folder" in natural_language_request:
-            return "mkdir new_folder"
+            return "mkdir new_folder", "destructive"
         else:
-            return f"echo 'Mock command for: {natural_language_request}'"
+            return f"echo 'Mock command for: {natural_language_request}'", "non-destructive"
 
 
 class GeminiLLMProvider(BaseLLMProvider):
@@ -50,11 +57,19 @@ class GeminiLLMProvider(BaseLLMProvider):
         except Exception as e:
             raise RuntimeError(f"Failed to configure Gemini API: {e}")
 
-    def generate_command(self, natural_language_request: str) -> str:
-        prompt = f"Convert the following natural language request into a single, executable bash command. Do not include any explanations or additional text, only the command.\n\nRequest: {natural_language_request}\nCommand:"
+    def generate_command(self, natural_language_request: str) -> tuple[str, str]:
+        prompt = PROMPT_TEMPLATE.format(request=natural_language_request)
         try:
             response = self.model.generate_content(prompt)
-            return response.text.strip()
+            response_text = response.text.strip()
+            lines = response_text.splitlines()
+            if len(lines) >= 2:
+                command = lines[0]
+                classification = lines[1]
+            else:
+                command = response_text
+                classification = "non-destructive"
+            return command, classification
         except Exception as e:
             raise RuntimeError(f"Gemini API call failed: {e}")
 
@@ -71,18 +86,26 @@ class OpenAILLMProvider(BaseLLMProvider):
         except Exception as e:
             raise RuntimeError(f"Failed to configure OpenAI API: {e}")
 
-    def generate_command(self, natural_language_request: str) -> str:
-        prompt = f"Convert the following natural language request into a single, executable bash command. Do not include any explanations or additional text, only the command.\n\nRequest: {natural_language_request}\nCommand:"
+    def generate_command(self, natural_language_request: str) -> tuple[str, str]:
+        prompt = PROMPT_TEMPLATE.format(request=natural_language_request)
         try:
             response = self.client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                    {"role": "system", "content": "You are a helpful assistant that converts natural language requests into bash commands."}, # noqa
+                    {"role": "system", "content": "You are a helpful assistant that converts natural language requests into bash commands."},
                     {"role": "user", "content": prompt}
                 ],
                 max_tokens=100,
                 temperature=0.1,
             )
-            return response.choices[0].message.content.strip()
+            response_text = response.choices[0].message.content.strip()
+            lines = response_text.splitlines()
+            if len(lines) >= 2:
+                command = lines[0]
+                classification = lines[1]
+            else:
+                command = response_text
+                classification = "non-destructive"
+            return command, classification
         except Exception as e:
             raise RuntimeError(f"OpenAI API call failed: {e}")

@@ -20,8 +20,12 @@ def run_nlba(request: str, provider: str = "mock", skip_confirmation: bool = Fal
     print(f"Your request: {request}")
 
     # Step 1: Generate bash command
-    bash_command = llm_provider.generate_command(request)
-    print(f"Generated command: {bash_command}")
+    bash_command, classification = llm_provider.generate_command(request)
+    if classification == "destructive":
+        color_code = "\033[91m"  # Red
+    else:
+        color_code = "\033[92m"  # Green
+    print(f"Generated command: {color_code}{bash_command}\033[0m")
 
     # Step 2: Confirm with user (unless --yes is used or skip_confirmation is True)
     if not skip_confirmation:
@@ -32,6 +36,15 @@ def run_nlba(request: str, provider: str = "mock", skip_confirmation: bool = Fal
 
     # Step 3: Execute command
     stdout, stderr, exit_code = executor.execute_command(bash_command)
+
+    if classification == "destructive":
+        color_code = "\033[91m"  # Red
+    else:
+        color_code = "\033[92m"  # Green
+    print(f"Command Output: {color_code}{stdout}\033[0m")
+    if stderr:
+        print(f"STDERR: {color_code}{stderr}\033[0m")
+    print(f"Exit Code: {exit_code}")
 
     print("\n--- Command Output ---")
     if stdout:
@@ -72,4 +85,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
