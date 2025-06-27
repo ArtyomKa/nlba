@@ -62,6 +62,7 @@ class GeminiLLMProvider(BaseLLMProvider):
         try:
             response = self.model.generate_content(prompt)
             response_text = response.text.strip()
+            print(f"Gemini response: {response_text}")
             lines = response_text.splitlines()
             if len(lines) >= 2:
                 command = lines[0]
@@ -99,6 +100,7 @@ class OpenAILLMProvider(BaseLLMProvider):
                 temperature=0.1,
             )
             response_text = response.choices[0].message.content.strip()
+            print(f"OpenAI response: {response_text}")
             lines = response_text.splitlines()
             if len(lines) >= 2:
                 command = lines[0]

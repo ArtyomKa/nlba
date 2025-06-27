@@ -21,7 +21,7 @@ def run_nlba(request: str, provider: str = "mock", skip_confirmation: bool = Fal
 
     # Step 1: Generate bash command
     bash_command, classification = llm_provider.generate_command(request)
-    if classification == "destructive":
+    if classification.lower() == "destructive":
         color_code = "\033[91m"  # Red
     else:
         color_code = "\033[92m"  # Green
