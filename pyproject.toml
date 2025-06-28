@@ -13,6 +13,9 @@ requires-python = ">=3.9"
 [project.optional-dependencies]
 dev = ["pytest"]
 
+[project.scripts]
+nlba = "nlba.nlba:main"
+
 [build-system]
 requires = ["uv>=0.1.0", "setuptools"]
 build-backend = "setuptools.build_meta"
