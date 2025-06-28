@@ -27,3 +27,6 @@ Thumbs.db
 
 .venv/
 .pytest_cache/
+
+# VS Code settings
+.vscode/
