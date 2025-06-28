@@ -25,6 +25,10 @@ To create a command-line utility that translates natural language requests into 
 *   **Framework:** `pytest`
 *   **Execution:** Tests are run using `uv run pytest` from the project root.
 
+## Configuration Persistence
+*   **Global Configuration:** `~/.config/nlba/config.yaml`
+*   **Workspace Configuration:** `./.nlba/config.yaml` (overrides global settings)
+
 ## Project Structure
 *   `src/nlba/nlba.py`: Main CLI script.
 *   `src/nlba/llm_interface.py`: Handles communication with the LLM.

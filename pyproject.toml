@@ -5,7 +5,8 @@ description = "Natural Language Bash Assistant"
 authors = [{ name = "Artyomka", email = "artyomka@example.com" }]
 dependencies = [
     "google-generativeai",
-    "openai"
+    "openai",
+    "pyyaml"
 ]
 
 requires-python = ">=3.9"

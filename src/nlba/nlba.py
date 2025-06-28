@@ -4,6 +4,7 @@ import argparse
 import os
 from nlba.llm_interface import MockLLMProvider, GeminiLLMProvider, OpenAILLMProvider
 from nlba.command_executor import CommandExecutor
+from nlba.config_manager import load_config, save_config
 
 def run_nlba(request: str, provider: str = "mock", skip_confirmation: bool = False):
     if provider == "mock":
@@ -64,6 +65,7 @@ def main():
     parser.add_argument(
         "request",
         type=str,
+        nargs="?",  # Make request optional for --set-provider
         help="Your natural language request (e.g., 'list all files')"
     )
     parser.add_argument(
@@ -76,13 +78,35 @@ def main():
     parser.add_argument(
         "--provider",
         type=str,
-        default="mock",
         choices=["mock", "gemini", "openai"],
-        help="Specify the LLM provider to use (e.g., 'gemini', 'openai', 'mock')"
+        help="Specify the LLM provider to use (e.g., 'gemini', 'openai', 'mock'). Overrides saved config."
+    )
+
+    parser.add_argument(
+        "--set-provider",
+        type=str,
+        choices=["mock", "gemini", "openai"],
+        help="Save the specified LLM provider as default for future interactions."
     )
 
     args = parser.parse_args()
-    run_nlba(args.request, args.provider, args.yes)
+
+    config = load_config()
+    
+    # Handle --set-provider
+    if args.set_provider:
+        config['nlba'] = {'provider': args.set_provider}
+        save_config(config)
+        print(f"Default provider set to: {args.set_provider}")
+        return # Exit after setting provider
+
+    # Determine the provider to use
+    provider_to_use = args.provider or config.get('nlba', {}).get('provider', 'mock')
+
+    if not args.request:
+        parser.error("the following arguments are required: request (unless --set-provider is used)")
+
+    run_nlba(args.request, provider_to_use, args.yes)
 
 if __name__ == "__main__":
     main()
