@@ -41,19 +41,20 @@ def run_nlba(request: str, provider: str = "mock", skip_confirmation: bool = Fal
         color_code = "\033[91m"  # Red
     else:
         color_code = "\033[92m"  # Green
-    print(f"Command Output: {color_code}{stdout}\033[0m")
-    if stderr:
-        print(f"STDERR: {color_code}{stderr}\033[0m")
-    print(f"Exit Code: {exit_code}")
+    # Determine color for output based on classification
+    if classification.lower() == "destructive":
+        color_code = "\033[91m"  # Red
+    else:
+        color_code = "\033[92m"  # Green
 
     print("\n--- Command Output ---")
     if stdout:
         print("STDOUT:")
-        print(stdout)
+        print(f"{color_code}{stdout}\033[0m")
     if stderr:
         print("STDERR:")
-        print(stderr)
-    print(f"Exit Code: {exit_code}")
+        print(f"{color_code}{stderr}\033[0m")
+    print(f"Exit Code: {color_code}{exit_code}\033[0m")
     print("----------------------")
 
 def main():

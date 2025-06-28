@@ -31,8 +31,8 @@ def test_list_files_mock_provider(mock_input):
 
     assert "Your request: list files in current directory" in output
     assert re.search(r"Generated command: \x1b\[\d+m?ls -l\x1b\[0m", output)
-    assert "STDOUT:\nmock_ls_output" in output
-    assert "Exit Code: 0" in output
+    assert "STDOUT:\n\x1b[92mmock_ls_output\x1b[0m" in output
+    assert "Exit Code: \x1b[92m0\x1b[0m" in output
 
 @patch('nlba.nlba.CommandExecutor', new=MockCommandExecutor)
 @patch('builtins.input', return_value='y')
@@ -44,7 +44,7 @@ def test_create_directory_mock_provider(mock_input):
 
     assert "Your request: create directory new_dir" in output
     assert re.search(r"Generated command: \x1b\[\d+m?mkdir new_dir\x1b\[0m", output)
-    assert "Exit Code: 0" in output
+    assert "Exit Code: \x1b[91m0\x1b[0m" in output
 
 @patch('nlba.nlba.CommandExecutor', new=MockCommandExecutor)
 @patch('builtins.input', return_value='y')
@@ -56,7 +56,7 @@ def test_remove_file_mock_provider(mock_input):
 
     assert "Your request: remove file test_file.txt" in output
     assert re.search(r"Generated command: \x1b\[\d+m?rm test_file.txt\x1b\[0m", output)
-    assert "Exit Code: 0" in output
+    assert "Exit Code: \x1b[91m0\x1b[0m" in output
 
 @patch('nlba.nlba.CommandExecutor', new=MockCommandExecutor)
 @patch('nlba.llm_interface.GeminiLLMProvider.generate_command', return_value=('ls -l', 'non-destructive'))
@@ -69,8 +69,8 @@ def test_list_files_gemini_provider(mock_input, mock_gemini_generate_command):
 
     assert "Your request: list files in current directory" in output
     assert re.search(r"Generated command: \x1b\[\d+m?ls -l\x1b\[0m", output)
-    assert "STDOUT:\nmock_ls_output" in output
-    assert "Exit Code: 0" in output
+    assert "STDOUT:\n\x1b[92mmock_ls_output\x1b[0m" in output
+    assert "Exit Code: \x1b[92m0\x1b[0m" in output
     mock_gemini_generate_command.assert_called_once_with("list files in current directory")
 
 @patch('nlba.nlba.CommandExecutor', new=MockCommandExecutor)
@@ -84,5 +84,5 @@ def test_create_folder_openai_provider(mock_input, mock_openai_generate_command)
 
     assert "Your request: create a new folder called new_folder" in output
     assert re.search(r"Generated command: \x1b\[\d+m?mkdir new_folder\x1b\[0m", output)
-    assert "Exit Code: 0" in output
+    assert "Exit Code: \x1b[91m0\x1b[0m" in output
     mock_openai_generate_command.assert_called_once_with("create a new folder called new_folder")

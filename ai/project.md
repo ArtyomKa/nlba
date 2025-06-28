@@ -19,11 +19,16 @@ To create a command-line utility that translates natural language requests into 
 *   **LLM:** Placeholder for an LLM API (e.g., Gemini API, OpenAI API).
 *   **Shell Interaction:** Python's `subprocess` module.
 *   **CLI Framework:** `argparse` (initially).
+*   **Package manager:** `uv`
+
+## Testing
+*   **Framework:** `pytest`
+*   **Execution:** Tests are run using `uv run pytest` from the project root.
 
 ## Project Structure
 *   `src/nlba/nlba.py`: Main CLI script.
-*   `src/nlba/llm_interface.py` (Future): Handles communication with the LLM.
-*   `src/nlba/command_executor.py` (Future): Manages the execution of bash commands.
+*   `src/nlba/llm_interface.py`: Handles communication with the LLM.
+*   `src/nlba/command_executor.py`: Manages the execution of bash commands.
 *   `ai/`: Directory for AI-related components and project documentation.
     *   `project.md`: This project description.
     *   `tasks.md`: List of performed and future tasks.
