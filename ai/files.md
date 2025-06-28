@@ -11,6 +11,7 @@
 - `src/nlba/command_executor.py`: Module managing execution of bash commands.
 - `src/nlba/llm_interface.py`: Module handling communication with LLM providers.
 - `src/nlba/nlba.py`: Main CLI script for the NLBA project.
+- `src/nlba/config_manager.py`: Module handling configuration loading and saving.
 - `src/nlba.egg-info/`: Metadata directory for the Python package.
 - `tests/`: Directory containing test files.
 - `tests/test_nlba.py`: Test suite for the NLBA project.

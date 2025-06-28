@@ -29,6 +29,15 @@ To create a command-line utility that translates natural language requests into 
 *   **Global Configuration:** `~/.config/nlba/config.yaml`
 *   **Workspace Configuration:** `./.nlba/config.yaml` (overrides global settings)
 
+### Details
+- Configuration persistence allows saving and loading the preferred LLM provider.
+- Two configuration file locations are supported:
+  - Global config: `~/.config/nlba/config.yaml`
+  - Workspace/local config: `./.nlba/config.yaml` (overrides global)
+- The CLI supports a `--set-provider` argument to save the default provider.
+- Configuration loading merges global and local configs, with local taking precedence.
+- Configuration saving writes to the global config file.
+
 ## Project Structure
 *   `src/nlba/nlba.py`: Main CLI script.
 *   `src/nlba/llm_interface.py`: Handles communication with the LLM.
