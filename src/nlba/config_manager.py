@@ -6,7 +6,7 @@ GLOBAL_CONFIG_FILE = CONFIG_DIR / "config.yaml"
 LOCAL_CONFIG_FILE = Path("./.nlba/config.yaml")
 
 def load_config():
-    config = {}
+    config = {'nlba': {'provider': 'mock', 'summarize': False}}
     
     # Load global config
     if GLOBAL_CONFIG_FILE.exists():

@@ -8,6 +8,14 @@ PROMPT_TEMPLATE = (
     "Do not include any explanations or additional text.\n\nRequest: {request}\nCommand:"
 )
 
+SUMMARY_PROMPT_TEMPLATE = (
+    "Summarize the following command output in a single, user-friendly sentence. "
+    "The original request was: '{request}'.\n\n"
+    "Command: '{command}'\n\n"
+    "Output:\n{output}\n\n"
+    "Summary:"
+)
+
 class BaseLLMProvider(ABC):
     """Abstract base class for LLM providers."""
 
@@ -23,6 +31,21 @@ class BaseLLMProvider(ABC):
             A tuple containing the bash command and a classification ("destructive" or "non-destructive").
         """
         return "ls -l", "non-destructive"
+
+    @abstractmethod
+    def summarize_output(self, request: str, command: str, output: str) -> str:
+        """
+        Summarizes the output of a command.
+
+        Args:
+            request: The original natural language request.
+            command: The executed bash command.
+            output: The output of the command.
+
+        Returns:
+            A natural language summary of the output.
+        """
+        return f"The command '{command}' was executed."
 
 
 class MockLLMProvider(BaseLLMProvider):
@@ -43,6 +66,9 @@ class MockLLMProvider(BaseLLMProvider):
         else:
             return f"echo 'Mock command for: {natural_language_request}'", "non-destructive"
 
+    def summarize_output(self, request: str, command: str, output: str) -> str:
+        return f"This is a mock summary for the command: '{command}'"
+
 
 class GeminiLLMProvider(BaseLLMProvider):
     """LLM provider using Google Gemini API."""
@@ -62,7 +88,7 @@ class GeminiLLMProvider(BaseLLMProvider):
         try:
             response = self.model.generate_content(prompt)
             response_text = response.text.strip()
-            print(f"Gemini response: {response_text}")
+            # print(f"Gemini response: {response_text}")
             lines = response_text.splitlines()
             if len(lines) >= 2:
                 command = lines[0]
@@ -71,6 +97,14 @@ class GeminiLLMProvider(BaseLLMProvider):
                 command = response_text
                 classification = "non-destructive"
             return command, classification
+        except Exception as e:
+            raise RuntimeError(f"Gemini API call failed: {e}")
+
+    def summarize_output(self, request: str, command: str, output: str) -> str:
+        prompt = SUMMARY_PROMPT_TEMPLATE.format(request=request, command=command, output=output)
+        try:
+            response = self.model.generate_content(prompt)
+            return response.text.strip()
         except Exception as e:
             raise RuntimeError(f"Gemini API call failed: {e}")
 
@@ -109,5 +143,21 @@ class OpenAILLMProvider(BaseLLMProvider):
                 command = response_text
                 classification = "non-destructive"
             return command, classification
+        except Exception as e:
+            raise RuntimeError(f"OpenAI API call failed: {e}")
+
+    def summarize_output(self, request: str, command: str, output: str) -> str:
+        prompt = SUMMARY_PROMPT_TEMPLATE.format(request=request, command=command, output=output)
+        try:
+            response = self.client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant that summarizes command outputs."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=100,
+                temperature=0.1,
+            )
+            return response.choices[0].message.content.strip()
         except Exception as e:
             raise RuntimeError(f"OpenAI API call failed: {e}")

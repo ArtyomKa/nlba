@@ -11,41 +11,7 @@ import yaml
 from pathlib import Path
 import sys # Added for sys.argv patching
 
-@pytest.fixture
-def setup_config_files(tmp_path):
-    # Mock Path.home() and Path.cwd() to control config locations
-    mock_home = tmp_path / "home_dir"
-    mock_home.mkdir()
-    mock_config_dir = mock_home / ".config" / "nlba"
-    mock_config_dir.mkdir(parents=True)
-    mock_global_config_file = mock_config_dir / "config.yaml"
 
-    mock_cwd = tmp_path / "current_dir"
-    mock_cwd.mkdir()
-    mock_local_config_dir = mock_cwd / ".nlba"
-    mock_local_config_dir.mkdir()
-    mock_local_config_file = mock_local_config_dir / "config.yaml"
-
-    with (patch('pathlib.Path.home', return_value=mock_home),
-         patch('pathlib.Path.cwd', return_value=mock_cwd),
-         patch('nlba.config_manager.GLOBAL_CONFIG_FILE', new=mock_global_config_file),
-         patch('nlba.config_manager.LOCAL_CONFIG_FILE', new=mock_local_config_file)):
-         yield mock_global_config_file, mock_local_config_file
-
-    # Clean up after tests
-    import shutil
-    if mock_global_config_file.exists():
-        mock_global_config_file.unlink()
-    if mock_local_config_file.exists():
-        mock_local_config_file.unlink()
-    if mock_local_config_dir.exists():
-        shutil.rmtree(mock_local_config_dir)
-    if mock_config_dir.exists():
-        shutil.rmtree(mock_config_dir)
-    if mock_home.exists():
-        shutil.rmtree(mock_home)
-    if mock_cwd.exists():
-        shutil.rmtree(mock_cwd)
 
 class MockCommandExecutor:
     def execute_command(self, command: str) -> tuple[str, str, int]:
@@ -251,7 +217,8 @@ def test_set_provider_saves_config(mock_input, setup_config_files):
 
 @patch('nlba.nlba.CommandExecutor', new=MockCommandExecutor)
 @patch('builtins.input', return_value='y')
-def test_load_local_config_overrides_global(mock_input, setup_config_files):
+@patch('nlba.llm_interface.GeminiLLMProvider.generate_command', return_value=('ls -l', 'non-destructive'))
+def test_load_local_config_overrides_global(mock_gemini_generate_command, mock_input, setup_config_files):
     global_config_file, local_config_file = setup_config_files
     
     # Set up global config
@@ -276,6 +243,8 @@ def test_load_local_config_overrides_global(mock_input, setup_config_files):
     assert re.search(r"Generated command: \x1b\[\d+m?ls -l\x1b\[0m", output)
     assert "STDOUT:\n\x1b[92mmock_ls_output\x1b[0m" in output
     assert "Exit Code: \x1b[92m0\x1b[0m" in output
+    mock_gemini_generate_command.assert_called_once_with("list files")
+
 
 @patch('nlba.nlba.CommandExecutor', new=MockCommandExecutor)
 @patch('builtins.input', return_value='y')

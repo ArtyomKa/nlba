@@ -41,14 +41,14 @@
     3.6.5. [x] Clean up created config files after tests.
 
 ## MVP3
-1. [ ] Implement Command Result Interpretation and Natural Language Summary
-   1.1. [ ] Extend the CLI to optionally pass command output back to the LLM after execution.
-   1.2. [ ] Update the LLM interface to accept command output as input and generate a natural language summary.
-   1.3. [ ] Modify the main CLI script (`nlba.py`) to display the LLM-generated summary alongside the command output.
-   1.4. [ ] Add a flag or configuration option to enable or disable this feature.
-   1.5. [ ] Write unit and integration tests covering:
-       1.5.1. [ ] Passing command output to the LLM.
-       1.5.2. [ ] Correct generation and display of the natural language summary.
-       1.5.3. [ ] Behavior when the feature is disabled.
-   1.6. [ ] Update `ai/files.md` if new modules or files are added.
-   1.7. [ ] Ensure all tests pass before marking the task as complete.
+1. [x] Implement Command Result Interpretation and Natural Language Summary
+   1.1. [x] Extend the CLI to optionally pass command output back to the LLM after execution.
+   1.2. [x] Update the LLM interface to accept command output as input and generate a natural language summary.
+   1.3. [x] Modify the main CLI script (`nlba.py`) to display the LLM-generated summary alongside the command output.
+   1.4. [x] Add a flag or configuration option to enable or disable this feature.
+   1.5. [x] Write unit and integration tests covering:
+       1.5.1. [x] Passing command output to the LLM.
+       1.5.2. [x] Correct generation and display of the natural language summary.
+       1.5.3. [x] Behavior when the feature is disabled.
+   1.6. [x] Update `ai/files.md` if new modules or files are added.
+   1.7. [x] Ensure all tests pass before marking the task as complete.

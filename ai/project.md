@@ -14,6 +14,10 @@ To create a command-line utility that translates natural language requests into 
 ## Core Features (MVP2)
 1. **Command Modification Indication:** Display the generated bash command in color to indicate whether it performs a modification (red) or is non-destructive (green).
 
+2. **Interactive Shell Interface:** Implement a shell-like interface where the user can run `nlba` to enter an interactive prompt (`>`). Users can type natural language requests, receive generated bash commands with modification indication, confirm execution, and view command output in a continuous session.
+## Core Features (MVP3)
+1. **Command Result Interpretation and Natural Language Summary:** Optionally, after a command is executed, its output can be sent back to the LLM to generate a user-friendly, natural language summary. This feature can be enabled with a `--summarize` flag or through a configuration setting.
+
 ## Technology Stack
 *   **Language:** Python
 *   **LLM:** Placeholder for an LLM API (e.g., Gemini API, OpenAI API).
