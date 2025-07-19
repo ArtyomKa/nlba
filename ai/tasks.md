@@ -10,7 +10,7 @@
 
 ## MVP2
 1. [x] Implement command modification indication (color-coding) based on LLM classification.
-2. [ ] Implement Basic Command History (view and re-execute past commands).
+2. [x] Implement Basic Command History (view and re-execute past commands).
 
 3. [x] Implement Configuration Persistence (save and load preferred LLM provider).
   3.1. [x] Add `PyYAML` dependency:

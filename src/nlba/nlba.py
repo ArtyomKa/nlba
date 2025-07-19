@@ -4,7 +4,7 @@ import argparse
 import os
 from nlba.llm_interface import MockLLMProvider, GeminiLLMProvider, OpenAILLMProvider
 from nlba.command_executor import CommandExecutor
-from nlba.config_manager import load_config, save_config
+from nlba.config_manager import load_config, save_config, log_request, get_history_file_path, get_history_entry
 
 def run_nlba(request: str, provider: str = "mock", skip_confirmation: bool = False, summarize: bool = False):
     if provider == "mock":
@@ -34,6 +34,8 @@ def run_nlba(request: str, provider: str = "mock", skip_confirmation: bool = Fal
         if confirmation != 'y':
             print("Command execution cancelled.")
             return
+    
+    log_request(request)
 
     # Step 3: Execute command
     stdout, stderr, exit_code = executor.execute_command(bash_command)
@@ -77,6 +79,7 @@ def run_interactive_shell(provider: str = "mock", summarize: bool = False):
     executor = CommandExecutor()
 
     print("Entering NLBA interactive shell. Type 'exit' or 'quit' to leave.")
+    display_history()
     while True:
         try:
             request = input("> ").strip()
@@ -85,6 +88,20 @@ def run_interactive_shell(provider: str = "mock", summarize: bool = False):
                 break
             if not request:
                 continue
+
+            if request.startswith('!'):
+                try:
+                    index = int(request[1:])
+                    history_request = get_history_entry(index)
+                    if history_request:
+                        print(f"Re-executing: {history_request}")
+                        request = history_request
+                    else:
+                        print(f"History entry !{index} not found.")
+                        continue
+                except (ValueError, IndexError):
+                    print(f"Invalid history command: {request}")
+                    continue
 
             print(f"Your request: {request}")
 
@@ -101,6 +118,8 @@ def run_interactive_shell(provider: str = "mock", summarize: bool = False):
             if confirmation != 'y':
                 print("Command execution cancelled.")
                 continue
+            
+            log_request(request)
 
             # Step 3: Execute command
             stdout, stderr, exit_code = executor.execute_command(bash_command)
@@ -125,6 +144,19 @@ def run_interactive_shell(provider: str = "mock", summarize: bool = False):
         except EOFError:
             print("\nExiting NLBA interactive shell.")
             break
+
+def display_history():
+    history_file = get_history_file_path()
+    if not history_file.exists():
+        print("No history found.")
+        return
+    
+    print("\n--- Command History ---")
+    with open(history_file, 'r') as f:
+        for i, line in enumerate(f, 1):
+            print(f"{i}: {line.strip()}")
+    print("----------------------\n")
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -162,8 +194,18 @@ def main():
         action="store_true",
         help="Enable command output summarization."
     )
+    
+    parser.add_argument(
+        "--history",
+        action="store_true",
+        help="Display command history."
+    )
 
     args = parser.parse_args()
+
+    if args.history:
+        display_history()
+        return
 
     config = load_config()
     
